@@ -4,7 +4,7 @@ let status = "less";
 
 let callAPI = async () => {
 
-    let url = `http://newsapi.org/v2/everything?sources=bbc-news&apiKey=${apiKey}`
+    let url = `https://newsapi.org/v2/everything?sources=bbc-news&apiKey=${apiKey}`
 
     let data = await fetch(url);
     let result = await data.json();
@@ -45,7 +45,7 @@ let render = (array) => {
 
 
 let getMoreData = async () => {
-    let moreUrl = `http://newsapi.org/v2/everything?sources=bbc-news&pageSize=40&apiKey=${apiKey}`
+    let moreUrl = `https://newsapi.org/v2/everything?sources=bbc-news&pageSize=40&apiKey=${apiKey}`
 
     let moreData = await fetch(moreUrl);
     let moreResult = await moreData.json();
