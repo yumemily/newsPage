@@ -1,10 +1,12 @@
 let newsList = [];
 let apiKey = '957e244988d4422e806f06d82ddd8856'
 let page = 1;
+category = 'general';
+
 
 let callAPI = async () => {
-
-  let url = `https://newsapi.org/v2/everything?q=korea&page=${page}&apiKey=${apiKey}`;
+  
+  let url=`https://newsapi.org/v2/top-headlines?country=us&category=${category}&page=${page}&apiKey=${apiKey}`;
 
   let data = await fetch(url);
   let result = await data.json();
@@ -19,6 +21,7 @@ let callAPI = async () => {
 
   render(newsList);
 }
+callAPI();
 
 let render = (array) => {
   let htmlForNews = array.map((item) => {
@@ -43,27 +46,17 @@ let render = (array) => {
   document.getElementById('newsArea').innerHTML = htmlForNews
 }
 
-
-let getSources = (item) => {
-  item.map(a => {
-    let source = a.source.name;
-    if (sources[source] == null) {
-      sources[source] = 0;
-    };
-    sources[source]++;
-  })
-  showSources(newsList);
-}
-
 let loadMore = () => {
   page++;
   console.log(page);
+  render(newsList);
   callAPI();
 }
 
 let searchByCategory = async () => {
+  callAPI();
   let category = document.getElementById("category").value;
-  let url = `https://newsapi.org/v2/top-headlines?category=${category}&apiKey=${apiKey}`;
+  let url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&page=${page}&apiKey=${apiKey}`;
   let data = await fetch(url);
   let result = await data.json();
 
@@ -73,36 +66,35 @@ let searchByCategory = async () => {
 
 
 let searchBySource = () => {
-  let sourceNames = newsList.map(item => item.source.name);
+  
+  let sourceNames = newsList.map((item) => item.source.name);
 
   let sourceObject = sourceNames.reduce((total, name) => {
     console.log("total:", total);
-    if (name in total) {// in is the operator to use for object and find the key from object
+    if (name in total) {
       total[name]++;
     } else {
       total[name] = 1;
     }
     return total;
-  }, {});
+  },{});
 
-  let sourceArray = Object.keys(sourceObject);// get the Key from object to the array 
+  let sourceArray = Object.keys(sourceObject);
 
-  let htmlForSource = sourceArray.map(
-    item =>
+  let htmlForSource = sourceArray.map((item) =>
     `<li class="list-group-item"> <input onchange='sourceClicked("${item}")' type="checkbox" id="${item}"/> ${item} (${sourceObject[item]})</li>`
      
   ).join('');
-
+  
   document.getElementById("source").innerHTML = htmlForSource;
-}
+};
 
 let sourceClicked = index => {
   if (document.getElementById(index).checked == true) {
-    let filteredNews = newsList.filter(item => item.source.name === index);
+    let filteredNews = newsList.filter((item) => item.source.name.split('.')[0]===index)
     render(filteredNews);
   } else {
     render(newsList);
   }
-};
+}
 
-callAPI();
