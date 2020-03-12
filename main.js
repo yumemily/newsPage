@@ -4,7 +4,7 @@ let page = 1;
 
 let callAPI = async () => {
 
-  let url = `http://newsapi.org/v2/everything?q=korea&page=${page}&apiKey=${apiKey}`;
+  let url = `https://newsapi.org/v2/everything?q=korea&page=${page}&apiKey=${apiKey}`;
 
   let data = await fetch(url);
   let result = await data.json();
@@ -63,7 +63,7 @@ let loadMore = () => {
 
 let searchByCategory = async () => {
   let category = document.getElementById("category").value;
-  let url = `http://newsapi.org/v2/top-headlines?category=${category}&apiKey=${apiKey}`;
+  let url = `https://newsapi.org/v2/top-headlines?category=${category}&apiKey=${apiKey}`;
   let data = await fetch(url);
   let result = await data.json();
 
