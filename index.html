@@ -11,8 +11,27 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1 id="title" class="text-center">BBC News</h1>
+    <div><h1 id="title" class="text-center m-3">Breaking News</h1></div>
+    <div class="container d-flex">
+        <div>
+            <select id="category" onchange="searchByCategory()">
+                <option value="business">Business</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="general">General</option>
+                <option value="science">Science</option>
+                <option value="health">Health</option>
+            </select>
+        <div class="card mt-5 mr-3 border border-white" style="width: 18rem;">
+            <div class="card-header">
+              Display by source
+            </div>
+            <ul id="source" class="list-group list-group-flush">
+              <li class="list-group-item">Cras justo odio</li>
+              <li class="list-group-item">Dapibus ac facilisis in</li>
+              <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
+          </div>
+        </div>
         <div class="d-flex justify-content-center">
             <div id="newsArea">
                 <!-- <div class="card mb-3" style="max-width: 540px;">
@@ -34,8 +53,9 @@
             </div>
         </div>
         <div class="d-flex flex-row justify-content-center" id='articleCount'></div>
+
         <div class="d-flex flex-row justify-content-center" id='articleCount'> <button class="btn btn-dark my-2"
-                id="toggleButton" onclick=toggleShow()>Show More</button></div>
+                id="toggleButton" onclick=loadMore()>Show More</button></div>
     </div>
     <script src="main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>

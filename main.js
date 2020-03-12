@@ -1,27 +1,28 @@
 let newsList = [];
 let apiKey = '957e244988d4422e806f06d82ddd8856'
-let status = "less";
+let page = 1;
 
 let callAPI = async () => {
 
-    let url = `https://newsapi.org/v2/everything?sources=bbc-news&apiKey=${apiKey}`
+  let url = `http://newsapi.org/v2/everything?q=korea&page=${page}&apiKey=${apiKey}`;
 
-    let data = await fetch(url);
-    let result = await data.json();
+  let data = await fetch(url);
+  let result = await data.json();
 
-    let newsList = result.articles;
-    document.getElementById('articleCount').innerHTML = `Displaying ${newsList.length} Articles`;
-    console.log(newsList.length)
-    console.log("data", data);
-    console.log("json", result);
-    console.log("article list", newsList);
+  newsList = newsList.concat(result.articles);
+  searchBySource();
+  document.getElementById('articleCount').innerHTML = `Displaying ${newsList.length} Articles`;
+  console.log(newsList.length)
+  console.log("data", data);
+  console.log("json", result);
+  console.log("article list", newsList);
 
-    render(newsList);
+  render(newsList);
 }
 
 let render = (array) => {
-    let htmlForNews = array.map((item) => {
-        return `<div class="card mb-3" style="max-width: 800px;">
+  let htmlForNews = array.map((item) => {
+    return `<div class="card mb-3" style="max-width: 800px;">
     <div class="row no-gutters">
       <div class="col-md-4">
         <img src="${item.urlToImage}" class="card-img" height="100%" style="object-fit:cover;" alt="...">
@@ -38,37 +39,70 @@ let render = (array) => {
       </div>
     </div>
   </div>`
-    }).join('')
-    document.getElementById('newsArea').innerHTML = htmlForNews
+  }).join('')
+  document.getElementById('newsArea').innerHTML = htmlForNews
 }
 
 
-
-let getMoreData = async () => {
-    let moreUrl = `https://newsapi.org/v2/everything?sources=bbc-news&pageSize=40&apiKey=${apiKey}`
-
-    let moreData = await fetch(moreUrl);
-    let moreResult = await moreData.json();
-
-    let newsListMore = moreResult.articles;
-    document.getElementById('articleCount').innerHTML = `Displaying ${newsListMore.length} Articles`;
-    console.log(newsListMore.length)
-    console.log("data", moreData);
-    console.log("json", moreResult);
-    console.log("article list", newsListMore);
-    render(newsListMore);
+let getSources = (item) => {
+  item.map(a => {
+    let source = a.source.name;
+    if (sources[source] == null) {
+      sources[source] = 0;
+    };
+    sources[source]++;
+  })
+  showSources(newsList);
 }
 
-function toggleShow() {
-    if (status == "less") {
-        getMoreData();
-        document.getElementById("toggleButton").innerText = "See Less";
-        status = "more";
-    } else if (status == "more") {
-        callAPI();
-        document.getElementById("toggleButton").innerText = "See More";
-        status = "less"
+let loadMore = () => {
+  page++;
+  console.log(page);
+  callAPI();
+}
+
+let searchByCategory = async () => {
+  let category = document.getElementById("category").value;
+  let url = `http://newsapi.org/v2/top-headlines?category=${category}&apiKey=${apiKey}`;
+  let data = await fetch(url);
+  let result = await data.json();
+
+  newsList = result.articles;
+  render(newsList);
+};
+
+
+let searchBySource = () => {
+  let sourceNames = newsList.map(item => item.source.name);
+
+  let sourceObject = sourceNames.reduce((total, name) => {
+    console.log("total:", total);
+    if (name in total) {// in is the operator to use for object and find the key from object
+      total[name]++;
+    } else {
+      total[name] = 1;
     }
+    return total;
+  }, {});
+
+  let sourceArray = Object.keys(sourceObject);// get the Key from object to the array 
+
+  let htmlForSource = sourceArray.map(
+    item =>
+    `<li class="list-group-item"> <input onchange='sourceClicked("${item}")' type="checkbox" id="${item}"/> ${item} (${sourceObject[item]})</li>`
+     
+  ).join('');
+
+  document.getElementById("source").innerHTML = htmlForSource;
 }
+
+let sourceClicked = index => {
+  if (document.getElementById(index).checked == true) {
+    let filteredNews = newsList.filter(item => item.source.name === index);
+    render(filteredNews);
+  } else {
+    render(newsList);
+  }
+};
 
 callAPI();
